@@ -1,0 +1,15 @@
+/etc/hostapd.conf
+	SSID
+	WPA-key
+/etc/dnsmasq.conf
+	DHCP range
+	DNS server
+/etc/wvdial.conf
+	UMTS modem connection settings
+/etc/issue
+	Prompt you see before logging in via HDMI
+/etc/network/interfaces
+	IP of your raspberry
+	Various network settings
+/etc/udev/rules.d/70-usb-modeswitch.rules
+	switching info for your UMTS modem

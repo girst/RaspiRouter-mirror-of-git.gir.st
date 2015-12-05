@@ -1,0 +1,116 @@
+#!/bin/bash
+
+while : ; do
+setterm -inversescreen off
+#0. fetch data:
+  #1. lsusb
+    dispchar a
+    usb=$(lsusb)
+  #2. ps
+    dispchar b
+    proc=$(ps ax)
+
+#1. check hardware
+  #1.1 check umts modem
+  echo -n "UMTS: "
+    dispchar c
+    if [[ $(echo "$usb" | grep "12d1:1506") ]] ; then
+      echo -n "OK"
+    else
+      echo "Not Found"
+      setterm -inversescreen
+      echo -e "\n\n*** Replug Modem ***\n\n"
+disp "UMTS Fatal Error" #Modem Error: fatal!
+      sleep 5 #read -p "press enter" #while : ; do; done #halt exec
+    fi
+    if [[ $(echo "$usb" | grep "12d1:14fe") ]] ; then
+      echo -n "wrong mode"
+      usb_modeswitch -v 12d1 -p 14fe -V 12d1 -P 1506 -M 
+'55534243123456780000000000000011062000000100000000000000000000'
+disp "UMTS Modeswitch" #Modem Warning: mode
+      continue
+    fi
+  #1.2 check wlan stick
+  echo -ne "\nWLAN: "
+    dispchar d
+    if [[ $(echo "$usb" | grep "0cf3:9271") ]] ; then
+      echo -n "OK"
+    else
+      echo "error"
+      setterm -inversescreen
+      echo -e "\n\n*** Replug WiFi ***\n\n"
+disp "WiFi Fatal Error" #WiFi Error: fatal!
+      sleep 5 #read -p "press enter" #while : ; do; done #halt exec
+    fi
+#2. check services
+  #2.1 check hostapd
+  echo -ne "\nhostapd: "
+    dispchar e
+    if [[ $(echo "$proc" | grep "hostapd" | grep -v "grep") ]] ; then
+      echo -n "OK"
+    else
+      echo -n "restarting"
+      #hostpad /etc/hostapd.conf &
+      service hostapd restart
+disp "hostapd restart" #Service warning: hostapd
+      continue
+    fi
+  #2.2 check dnsmasq
+  echo -ne "\ndnsmasq: "
+    dispchar f
+    if [[ $(echo "$proc" | grep "dnsmasq" | grep -v "grep") ]] ; then
+      echo -n "OK"
+    else
+      echo -n "restarting"
+      service dnsmasq restart
+disp "dnsmasq restart" #Service warning: dnsmasq
+      continue
+    fi
+  #2.3 check wvdial
+  echo -ne "\nwvdial: "
+    dispchar g
+    if [[ $(echo "$proc" | grep "wvdial" | grep -v "grep") ]] ; then
+      echo -n "OK"
+    else
+      echo -n "restarting"
+      killall dial
+      killall wvdial
+      #killall modem-manager
+      dial & #wvdial &
+disp "wvdial restart" #Service warning: wvdial
+      continue
+    fi
+#3. check conncection
+  #3.1 check ping
+  echo -ne "\nPING: "
+    dispchar h
+    if [[ $(ping google.com -c 4 -i 0.2) ]] ; then
+      echo -n "OK"
+      #3.1-2 check http
+      echo -ne "\nWGET: "
+      dispchar i
+        wget -q --tries=3 --timeout=5 http://google.com/generate_204 -O - &>/dev/null
+        if [[ $? -eq 0 ]] ; then
+          echo -n "OK"
+        #4 OK, get client list
+          clients=$(iw dev wlan0 station dump|grep Station|wc -l)
+          echo "\nClients: $clients"
+disp "Luftinternet $clients"
+#disp "Luftinternet  :)"
+#disp "Luftinternet $(iw dev wlan0 station dump|grep Station|wc -l)"
+        else
+          echo "Unknown Error"
+disp "wget error unknw" #Unknown Error: wget!
+        fi
+    else
+      echo "ping error"
+disp "ping error unknw" #ping error
+      fi
+
+echo -ne "\n\n"
+
+#break
+dispchar +
+dispprogress #sleep 10 #dispprogress is a python script that displays a cursor and waits approx 8sec
+done
+

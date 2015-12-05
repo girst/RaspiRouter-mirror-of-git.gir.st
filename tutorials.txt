@@ -1,0 +1,4 @@
+https://www.thefanclub.co.za/how-to/how-setup-usb-3g-modem-raspberry-pi-using-usbmodeswitch-and-wvdial
+http://doku.yellowtux.org/index.php?id=34
+http://www.schnatterente.net/technik/raspberry-pi-32-zeichen-hitachi-hd44780-display
+

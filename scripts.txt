@@ -1,0 +1,14 @@
+/usr/bin/disp
+	echoes the first parameter to the LCD after clearing it
+	needs the RPi.GPIO library. 
+/usr/bin/dispchar
+	prints a single ASCII character at the current position of the LCD. 
+	does not advance cursor. 
+/usr/bin/dispchar
+	scrolls the _ cursor from left to right in 8 seconds (used as a fancy sleep)
+/usr/bin/dial
+	a while-wrapper for wvdial, as wvdial does not automatically reconnect when
+	the connection is lost. 
+/usr/bin/monitor-luftinternet
+	my rather extensive status-checker. 
+	prints status to the first tty and the HD44780

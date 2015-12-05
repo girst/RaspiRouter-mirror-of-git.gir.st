@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#wrapper for wvdial, because it looses connection and quits often
+while : ; do
+ wvdial
+ #sleep 10
+ sleep 2
+done
+
